@@ -6,10 +6,12 @@ import org.junit.jupiter.api.Test;
 
 public class InvoiceGeneratortest {
     private InvoiceGenerator invoiceGenerator;
+    private RideRepository rideRepository;
 
     @Before
     public void init() {
         invoiceGenerator = new InvoiceGenerator();
+        rideRepository = new RideRepository();
     }
 
     @Test
@@ -47,6 +49,19 @@ public class InvoiceGeneratortest {
         InvoiceSummary invoiceSummary = invoiceGenerator.calculateFare(rides);
         InvoiceSummary expectedSummary = new InvoiceSummary(2, 39, 19.5);
         Assert.assertEquals(expectedSummary, invoiceSummary);
+    }
 
+    @Test
+    public void givenAUserId_ShouldReturnTheInvoiceSummary_After_GettingListOfRidesFromRideRepositor() {
+        String userId = "code1";
+        Ride[] rides = {
+                new Ride(2.5, 3),
+                new Ride(0.5, 2),
+                new Ride(8, 5)
+        };
+        rideRepository.add(userId, rides);
+        InvoiceSummary invoiceSummary = invoiceGenerator.calculateFare(userId, rideRepository);
+        InvoiceSummary expectedSummary = new InvoiceSummary(3, 120, 40);
+        Assert.assertEquals(expectedSummary, invoiceSummary);
     }
 }
